@@ -3,8 +3,10 @@ export default function Footer() {
 
     return (
         <>
-            <footer>
-                <p>This is the footer</p>
+            <footer className="backdrop-blur-md bg-white/30 border-t border-white/10 p-8 text-gray-800 shadow-lg">
+                <p className="text-center font-medium py-4">
+                    This is the footer
+                </p>
             </footer>
         </>
     )
