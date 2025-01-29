@@ -1,29 +1,35 @@
-import {useState} from "react";
+import {FormEvent, useState} from "react";
 
 type LinkFormProps = {
-    onSubmit: (link: string) => void;
+    uploadFile: (file: FormData) => void;
 };
 
 export default function LinkForm(props: LinkFormProps) {
 
-    const [link, setLink] = useState<string>("");
+    const [file, setFile] = useState<File | undefined>(undefined);
 
-    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        props.onSubmit(link);
+    const handleFileUpload = (event: FormEvent<HTMLFormElement>) => {
+        event.isDefaultPrevented()
+        if (!file) {
+            alert('Bitte wähle eine Datei aus.');
+            return;
+        }
+        const formData = new FormData();
+        formData.append('file', file);
+
+        props.uploadFile(formData)
     }
 
 
     return (
         <>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={handleFileUpload}>
                 <input
-                    type={"text"}
-                    placeholder={"Enter a youtube link here..."}
-                    value={link}
-                    onChange={(event) => setLink(event.target.value)}
+                    type={"file"}
+                    accept={"audio/mp3"}
+                    onChange={(event) => setFile(event.target.files?.[0])}
                 />
-                <button type="submit">Summarize</button>
+                <button >Hochladen</button>
             </form>
         </>
     )
