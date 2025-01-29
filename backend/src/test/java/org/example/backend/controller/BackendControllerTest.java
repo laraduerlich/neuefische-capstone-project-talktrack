@@ -42,4 +42,10 @@ class BackendControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void uploadFile_shouldThrowException () throws Exception {
+        mockMvc.perform(multipart("/api/upload"))
+                .andExpect(status().isBadRequest());
+    }
+
 }
