@@ -1,16 +1,12 @@
 import {FormEvent, useState} from "react";
 import axios from "axios";
 
-// type LinkFormProps = {
-//     uploadFile: (file: FormData) => void;
-// };
-
 export default function LinkForm() {
 
     const [file, setFile] = useState<File | undefined>(undefined);
 
-    const handleFileUpload = (event: FormEvent<HTMLFormElement>) => {
-        event.isDefaultPrevented()
+    const handleFileUpload = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         if (!file) {
             alert('Bitte wähle eine Datei aus.');
             return;
@@ -18,9 +14,8 @@ export default function LinkForm() {
         const formData = new FormData();
         formData.append('file', file);
 
-        axios.post("/api/upload", file, {
+        axios.post("/api/upload", formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
-            timeout: 60000, // Erhöht das Timeout auf 60 Sekunden
         })
             .then(response => console.log(response))
             .catch(error => {console.error(error)});
