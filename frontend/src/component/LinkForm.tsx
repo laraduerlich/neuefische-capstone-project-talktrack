@@ -1,10 +1,11 @@
 import {FormEvent, useState} from "react";
+import axios from "axios";
 
-type LinkFormProps = {
-    uploadFile: (file: FormData) => void;
-};
+// type LinkFormProps = {
+//     uploadFile: (file: FormData) => void;
+// };
 
-export default function LinkForm(props: LinkFormProps) {
+export default function LinkForm() {
 
     const [file, setFile] = useState<File | undefined>(undefined);
 
@@ -17,7 +18,12 @@ export default function LinkForm(props: LinkFormProps) {
         const formData = new FormData();
         formData.append('file', file);
 
-        props.uploadFile(formData)
+        axios.post("/api/upload", file, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            timeout: 60000, // Erhöht das Timeout auf 60 Sekunden
+        })
+            .then(response => console.log(response))
+            .catch(error => {console.error(error)});
     }
 
 
@@ -26,7 +32,7 @@ export default function LinkForm(props: LinkFormProps) {
             <form onSubmit={handleFileUpload}>
                 <input
                     type={"file"}
-                    accept={"audio/mp3"}
+                    accept={"audio/mp3, audio/mp4, audio/m4a"}
                     onChange={(event) => setFile(event.target.files?.[0])}
                 />
                 <button >Hochladen</button>
