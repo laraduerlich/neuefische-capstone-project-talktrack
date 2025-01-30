@@ -1,6 +1,5 @@
 package org.example.backend.controller;
 
-import org.example.backend.exception.UploadFailedException;
 import org.example.backend.model.assemblyai.FileUploadRequest;
 import org.example.backend.service.AssemblyAiService;
 import org.springframework.http.HttpStatus;
