@@ -1,5 +1,6 @@
 package org.example.backend.service;
 
+import org.example.backend.exception.UploadFailedException;
 import org.example.backend.model.assemblyai.AssemblyAiResponse;
 import org.springframework.core.io.ByteArrayResource;
 import org.example.backend.model.assemblyai.FileUploadRequest;
@@ -9,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.io.IOException;
 
 @Service
 public class AssemblyAiService {
@@ -23,8 +26,7 @@ public class AssemblyAiService {
         this.webclient = builder.build();
     }
 
-    public Mono<AssemblyAiResponse> uploadFile(FileUploadRequest fileUploadRequest) {
-        try {
+    public Mono<AssemblyAiResponse> uploadFile(FileUploadRequest fileUploadRequest) throws IOException {
             // FileUploadRequest in ByteArrayResource umwandeln
             ByteArrayResource fileResource = new ByteArrayResource(fileUploadRequest.content()) {
                 @Override
@@ -41,8 +43,5 @@ public class AssemblyAiService {
                     .bodyValue(fileResource)  // Datei als Body setzen
                     .retrieve()
                     .bodyToMono(AssemblyAiResponse.class);  // Antwort (Upload-URL) erhalten
-        } catch (Exception e) {
-            return Mono.error(new RuntimeException("Fehler beim Verarbeiten der Datei", e));
-        }
     }
 }
