@@ -2,6 +2,7 @@ package org.example.backend.service;
 
 import org.example.backend.model.Summary;
 import org.example.backend.repo.SummaryRepo;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,9 +20,9 @@ class SummaryServiceTest {
         SummaryService service = new SummaryService(repo, idService, chatGPTService);
         String transcript = "Hallo";
 
-        Summary expected = new Summary("1", "Test", "Hallo");
+        Summary expected = new Summary("1", "title", "Hallo");
         when(idService.generateId()).thenReturn("1");
-        when(chatGPTService.summarizeTranscript(transcript)).thenReturn(transcript);
+        when(chatGPTService.summarizeTranscript(transcript)).thenReturn("Hallo");
         when(repo.save(expected)).thenReturn(expected);
 
         // WHEN
@@ -29,5 +30,8 @@ class SummaryServiceTest {
 
         // THEN
         assertEquals(expected,actual);
+        verify(repo).save(expected);
     }
+
+
 }
