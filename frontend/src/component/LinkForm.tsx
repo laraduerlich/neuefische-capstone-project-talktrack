@@ -4,6 +4,7 @@ import axios from "axios";
 export default function LinkForm() {
 
     const [file, setFile] = useState<File | undefined>(undefined);
+    const [error, setError] = useState<string | null>(null);
 
     const handleFileUpload = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -14,11 +15,15 @@ export default function LinkForm() {
         const formData = new FormData();
         formData.append('file', file);
 
-        axios.post("/api/upload", formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        })
-            .then(response => console.log(response))
-            .catch(error => {console.error(error)});
+        try {
+            const response = await axios.post<{ id: string }>("/api/upload", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            console.log("Upload erfolgreich, Summary ID:", response.data );
+        } catch (error: any) {
+            console.error("Fehler beim Hochladen:", error);
+            setError("Beim Hochladen der Datei ist ein Fehler aufgetreten.");
+        }
     }
 
 
@@ -28,7 +33,7 @@ export default function LinkForm() {
                 <input
                     type={"file"}
                     accept={"audio/mp3, audio/mp4, audio/m4a"}
-                    onChange={(event) => setFile(event.target.files?.[0])}
+                    onChange={(event) => setFile(event.target.files?.[0] || undefined)}
                 />
                 <button >Hochladen</button>
             </form>

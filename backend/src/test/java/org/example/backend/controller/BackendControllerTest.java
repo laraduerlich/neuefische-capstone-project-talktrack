@@ -58,6 +58,6 @@ class BackendControllerTest {
         when(mockFile.getBytes()).thenThrow(new IOException());
 
         // WHEN & THEN
-        assertThrows(IOException.class, () -> backendController.uploadFile(mockFile).block());
+        assertThrows(IOException.class, () -> backendController.uploadFile(mockFile));
     }
 }

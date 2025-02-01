@@ -1,12 +1,13 @@
 package org.example.backend.controller;
 
+import org.example.backend.model.Summary;
+import org.example.backend.model.assemblyai.AssemblyAiResponse;
 import org.example.backend.model.assemblyai.FileUploadRequest;
 import org.example.backend.service.AssemblyAiService;
-import org.springframework.http.HttpStatus;
+import org.example.backend.service.SummaryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import reactor.core.publisher.Mono;
 import java.io.IOException;
 
 @RestController
@@ -14,28 +15,28 @@ import java.io.IOException;
 public class BackendController {
 
     private final AssemblyAiService assemblyAiService;
+    private final SummaryService service;
 
-    public BackendController(AssemblyAiService assemblyAiService) {
+    public BackendController(AssemblyAiService assemblyAiService, SummaryService service) {
         this.assemblyAiService = assemblyAiService;
+        this.service = service;
     }
 
-    // File wird bei AssemblyAi hochgeladen
     @PostMapping("/upload")
-    public Mono<ResponseEntity<String>> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        // MultipartFile in Record umwandeln
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+            // transfer MultipartFile in Record
             FileUploadRequest fileUploadRequest = new FileUploadRequest(
                     file.getOriginalFilename(),
                     file.getBytes()
             );
-            return assemblyAiService.uploadFile(fileUploadRequest)
-                    .map(response -> ResponseEntity.ok(response.upload_url()));  // Nur die URL extrahieren
-    }
+            // Upload the file on AssemblyAi
+            AssemblyAiResponse assemblyAiResponse = assemblyAiService.uploadFile(fileUploadRequest);
+            // transcribe the audio
+            String transcript = assemblyAiService.transcriptFile(assemblyAiResponse).orElse("Fehler");
+            // summarize the transcript
+            Summary summary = service.createSummary(transcript);
 
-    @ExceptionHandler(IOException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleIOException(IOException e) {
-        return e.getMessage();
+        return ResponseEntity.ok(summary.id());
     }
-
 
 }
