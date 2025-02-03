@@ -44,11 +44,6 @@ class BackendControllerTest {
     @MockBean
     private SummaryService service;
 
-    @DynamicPropertySource
-    static void registerAssemblyAiProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.assemblyai.api.key", () -> "test-assembly");
-    }
-
     @Test
     void uploadFile_checkResponseStatus() throws Exception {
         // GIVEN
