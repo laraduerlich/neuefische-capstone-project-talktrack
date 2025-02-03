@@ -2,7 +2,6 @@ package org.example.backend.service;
 
 import org.example.backend.model.Summary;
 import org.example.backend.repo.SummaryRepo;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
