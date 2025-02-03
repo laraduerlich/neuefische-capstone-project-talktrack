@@ -39,6 +39,11 @@ public class ChatGPTService {
                 .retrieve()
                 .body(ChatGPTResponse.class);
 
+        // Check if the response is valid
+        if (response == null || response.choices() == null || response.choices().isEmpty()) {
+            throw new RuntimeException("Fehler: OpenAI API hat keine gültige Antwort zurückgegeben!");
+        }
+
         return response.choices().get(0).message().content();
     }
 }

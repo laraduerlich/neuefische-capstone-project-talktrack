@@ -70,7 +70,7 @@ public class AssemblyAiService {
         Transcript transcript = client.transcripts().transcribe(response.upload_url(), params);
 
         if (transcript.getStatus().equals(TranscriptStatus.ERROR)) {
-            System.err.println(transcript.getError().get());
+            transcript.getError().ifPresent(System.err::println);
             return Optional.empty();
         }
 
