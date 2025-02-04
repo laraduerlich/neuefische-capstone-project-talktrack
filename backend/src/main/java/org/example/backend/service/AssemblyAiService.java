@@ -21,7 +21,6 @@ import java.util.Optional;
 public class AssemblyAiService {
 
     private final WebClient webclient;
-    private AssemblyAI client;
 
     @Value("${app.assemblyai.api.key}")
     String assemblyApiKey;
@@ -33,16 +32,6 @@ public class AssemblyAiService {
                 .build();
     }
 
-    @PostConstruct // Runs after dependency injection to initialize the client
-    public void initClient() {
-        this.client = AssemblyAI.builder()
-                .apiKey(assemblyApiKey)
-                .build();
-    }
-
-    TranscriptOptionalParams params = TranscriptOptionalParams.builder()
-            .speakerLabels(true)
-            .build();
 
     // Upload the file on AssemblyAI
     public AssemblyAiResponse uploadFile(FileUploadRequest fileUploadRequest) throws IOException {
@@ -65,16 +54,6 @@ public class AssemblyAiService {
                 .getBody();
     }
 
-    // Transcribe the file on AssemblyAI
-    public Optional<String> transcriptFile (AssemblyAiResponse response) {
-        Transcript transcript = client.transcripts().transcribe(response.upload_url(), params);
 
-        if (transcript.getStatus().equals(TranscriptStatus.ERROR)) {
-            transcript.getError().ifPresent(System.err::println);
-            return Optional.empty();
-        }
-
-        return transcript.getText();
-    }
 
 }

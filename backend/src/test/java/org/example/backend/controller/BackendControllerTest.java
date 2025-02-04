@@ -1,29 +1,28 @@
 package org.example.backend.controller;
 
+import com.assemblyai.api.resources.transcripts.types.Transcript;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.example.backend.model.Summary;
 import org.example.backend.model.assemblyai.AssemblyAiResponse;
-import org.example.backend.model.assemblyai.FileUploadRequest;
-import org.example.backend.service.AssemblyAiService;
-import org.example.backend.service.SummaryService;
+import org.example.backend.service.TranscriptionService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -31,8 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @SpringBootTest
@@ -42,8 +39,8 @@ class BackendControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    AssemblyAiService assemblyAiService;
+    @MockitoBean
+    private TranscriptionService transcriptionServiceMock;
 
     private static MockWebServer assemblyAiMockServer;
 
@@ -80,10 +77,26 @@ class BackendControllerTest {
         );
         AssemblyAiResponse mockResponse = new AssemblyAiResponse("test-url");
         String transcript = "Das ist ein Test";
+        Transcript mockTranscript = Transcript.builder()
+                .id("1").
+                languageModel("JSON")
+                .acousticModel(null).
+                status(null).
+                audioUrl(null).
+                webhookAuth(false)
+                .autoHighlights(false)
+                .redactPii(false)
+                .summarization(false)
+                .text(Optional.of(transcript))
+                .build();
 
         assemblyAiMockServer.enqueue(new MockResponse()
                 .addHeader("Content-Type", "application/json")
-                .setBody(String.valueOf(mockResponse)));
+                .setBody("""
+                        {
+                        "upload_url": "test-url"
+                        }
+                        """));
 
         chatGPTMockServer.enqueue(new MockResponse()
                 .addHeader("Content-Type", "application/json")
@@ -108,7 +121,7 @@ class BackendControllerTest {
                         }
                         """));
 
-        when(assemblyAiService.transcriptFile(mockResponse)).thenReturn(Optional.of(transcript));
+        when(transcriptionServiceMock.transcriptFile(any(AssemblyAiResponse.class))).thenReturn(Optional.of("Das ist ein Test"));
 
         // WHEN & THEN
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/upload")
