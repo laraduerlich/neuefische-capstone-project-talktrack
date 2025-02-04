@@ -20,16 +20,16 @@ import java.util.Optional;
 @Service
 public class AssemblyAiService {
 
-    // API Key for AssemblyAI
-    @Value("${app.assemblyai.api.key}")
-    private String assemblyApiKey;
-
     private final WebClient webclient;
     private AssemblyAI client;
 
-    public AssemblyAiService(WebClient.Builder builder) {
+    @Value("${app.assemblyai.api.key}")
+    String assemblyApiKey;
+
+
+    public AssemblyAiService(@Value("${urlAssembly}") String url, WebClient.Builder builder) {
         this.webclient = builder
-                .baseUrl("https://api.assemblyai.com/v2")
+                .baseUrl(url)
                 .build();
     }
 
@@ -56,13 +56,13 @@ public class AssemblyAiService {
 
         // WebClient-Upload with Multipart-Formular
         return webclient.post()
-                .uri("https://api.assemblyai.com/v2/upload")
                 .header(HttpHeaders.AUTHORIZATION, assemblyApiKey)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .bodyValue(fileResource)  // file in Body
                 .retrieve()
-                .bodyToMono(AssemblyAiResponse.class) // Response (Upload-URL)
-                .block();
+                .toEntity(AssemblyAiResponse.class)// Response (Upload-URL)
+                .block()
+                .getBody();
     }
 
     // Transcribe the file on AssemblyAI

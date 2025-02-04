@@ -21,7 +21,7 @@ public class ChatGPTService {
 
     // API Key for ChatGPT
     @Value("${app.chatgpt.api.key}")
-    private String apiKey;
+    private String chatGPTApiKey;
 
     public ChatGPTService(RestClient.Builder builder) {
         this.restClient = builder.build();
@@ -30,7 +30,7 @@ public class ChatGPTService {
     public String summarizeTranscript(String transcript) {
         ChatGPTResponse response = restClient.post()
                 .uri("https://api.openai.com/v1/chat/completions")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + chatGPTApiKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ChatGPTRequest(
                         "gpt-3.5-turbo",
