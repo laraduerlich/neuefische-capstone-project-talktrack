@@ -2,37 +2,26 @@ package org.example.backend.controller;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.example.backend.model.Summary;
 import org.example.backend.model.assemblyai.AssemblyAiResponse;
-import org.example.backend.model.assemblyai.FileUploadRequest;
-import org.example.backend.service.AssemblyAiService;
-import org.example.backend.service.SummaryService;
+import org.example.backend.service.AssemblyAiTranscriptService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @SpringBootTest
@@ -42,8 +31,8 @@ class BackendControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    AssemblyAiService assemblyAiService;
+    @MockitoBean
+    private AssemblyAiTranscriptService transcriptService;
 
     private static MockWebServer assemblyAiMockServer;
 
@@ -65,8 +54,8 @@ class BackendControllerTest {
 
     @DynamicPropertySource
     static void backendPropsAssemblyAi(DynamicPropertyRegistry registry){
-        registry.add( "urlAssembly", () -> assemblyAiMockServer.url("/").toString());
-        registry.add( "chatGPTApiKey", () -> chatGPTMockServer.url("/").toString());
+        registry.add( "ASSEMBLY_URL", () -> assemblyAiMockServer.url("/").toString());
+        registry.add( "CHATGPT_URL", () -> chatGPTMockServer.url("/").toString());
     }
 
     @Test
@@ -78,12 +67,14 @@ class BackendControllerTest {
                 "audio/m4a",                // MIME-Typ
                 "This is a test file".getBytes()  // Dateiinhalt als Byte-Array
         );
-        AssemblyAiResponse mockResponse = new AssemblyAiResponse("test-url");
-        String transcript = "Das ist ein Test";
 
         assemblyAiMockServer.enqueue(new MockResponse()
                 .addHeader("Content-Type", "application/json")
-                .setBody(String.valueOf(mockResponse)));
+                .setBody("""
+                        {
+                        "upload_url": "test-url"
+                        }
+                        """));
 
         chatGPTMockServer.enqueue(new MockResponse()
                 .addHeader("Content-Type", "application/json")
@@ -108,13 +99,53 @@ class BackendControllerTest {
                         }
                         """));
 
-        when(assemblyAiService.transcriptFile(mockResponse)).thenReturn(Optional.of(transcript));
+        when(transcriptService.transcriptFile(any(AssemblyAiResponse.class))).thenReturn(Optional.of("Das ist eine Zusammenfassung"));
 
         // WHEN & THEN
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/upload")
                         .file(mockFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void uploadFile_shouldThrowException() throws Exception {
+        // GIVEN
+        MockMultipartFile mockFile = new MockMultipartFile(
+                "file",               // Name des Dateifeldes
+                "testfile.m4a",             // Dateiname
+                "audio/m4a",                // MIME-Typ
+                "This is a test file".getBytes()  // Dateiinhalt als Byte-Array
+        );
+
+        assemblyAiMockServer.enqueue(new MockResponse()
+                .addHeader("Content-Type", "application/json")
+                .setBody("""
+                        {
+                        "upload_url": "test-url"
+                        }
+                        """));
+
+        chatGPTMockServer.enqueue(new MockResponse()
+                .addHeader("Content-Type", "application/json")
+                .setBody("""
+                        {
+                         "id": "chatcmpl-AlYfXsC7MleTcISu5Tih3xeaJfKdL",
+                         "object": "chat.completion",
+                         "created": 1735898047,
+                         "model": "gpt-3.5-turbo-0125",
+                         "choices": []
+                        }
+                        """));
+
+        when(transcriptService.transcriptFile(any(AssemblyAiResponse.class))).thenReturn(Optional.empty());
+
+        // WHEN & THEN
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/upload")
+                        .file(mockFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+
     }
 
 }

@@ -3,7 +3,8 @@ package org.example.backend.controller;
 import org.example.backend.model.Summary;
 import org.example.backend.model.assemblyai.AssemblyAiResponse;
 import org.example.backend.model.assemblyai.FileUploadRequest;
-import org.example.backend.service.AssemblyAiService;
+import org.example.backend.service.AssemblyAiUploadService;
+import org.example.backend.service.AssemblyAiTranscriptService;
 import org.example.backend.service.SummaryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +15,13 @@ import java.io.IOException;
 @RequestMapping("/api")
 public class BackendController {
 
-    private final AssemblyAiService assemblyAiService;
+    private final AssemblyAiUploadService assemblyAiUploadService;
+    private final AssemblyAiTranscriptService transcriptService;
     private final SummaryService service;
 
-    public BackendController(AssemblyAiService assemblyAiService, SummaryService service) {
-        this.assemblyAiService = assemblyAiService;
+    public BackendController(AssemblyAiUploadService assemblyAiUploadService, AssemblyAiTranscriptService transcriptService, SummaryService service) {
+        this.assemblyAiUploadService = assemblyAiUploadService;
+        this.transcriptService = transcriptService;
         this.service = service;
     }
 
@@ -30,9 +33,9 @@ public class BackendController {
                     file.getBytes()
             );
             // Upload the file on AssemblyAi
-            AssemblyAiResponse assemblyAiResponse = assemblyAiService.uploadFile(fileUploadRequest);
+            AssemblyAiResponse assemblyAiResponse = assemblyAiUploadService.uploadFile(fileUploadRequest);
             // transcribe the audio
-            String transcript = assemblyAiService.transcriptFile(assemblyAiResponse).orElse("Fehler");
+            String transcript = transcriptService.transcriptFile(assemblyAiResponse).orElse("Fehler");
             // summarize the transcript
             Summary summary = service.createSummary(transcript);
 

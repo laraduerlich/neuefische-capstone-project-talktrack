@@ -23,13 +23,14 @@ public class ChatGPTService {
     @Value("${app.chatgpt.api.key}")
     private String chatGPTApiKey;
 
-    public ChatGPTService(RestClient.Builder builder) {
-        this.restClient = builder.build();
+    public ChatGPTService(@Value("${CHATGPT_URL}") String url, RestClient.Builder builder) {
+        this.restClient = builder
+                .baseUrl(url)
+                .build();
     }
 
     public String summarizeTranscript(String transcript) {
         ChatGPTResponse response = restClient.post()
-                .uri("https://api.openai.com/v1/chat/completions")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + chatGPTApiKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ChatGPTRequest(
