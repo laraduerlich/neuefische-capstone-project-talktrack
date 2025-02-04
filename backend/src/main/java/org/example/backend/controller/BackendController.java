@@ -37,9 +37,6 @@ public class BackendController {
             // transcribe the audio
             String transcript = transcriptionService.transcriptFile(assemblyAiResponse).orElse("Fehler");
             // summarize the transcript
-        if (transcript.isBlank() || transcript.equals("") || transcript.equals("null") || transcript.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
             Summary summary = service.createSummary(transcript);
 
         return ResponseEntity.ok(summary.id());
