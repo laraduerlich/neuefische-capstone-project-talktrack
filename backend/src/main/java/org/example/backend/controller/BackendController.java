@@ -1,41 +1,45 @@
 package org.example.backend.controller;
 
+import org.example.backend.model.Summary;
+import org.example.backend.model.assemblyai.AssemblyAiResponse;
 import org.example.backend.model.assemblyai.FileUploadRequest;
-import org.example.backend.service.AssemblyAiService;
-import org.springframework.http.HttpStatus;
+import org.example.backend.service.AssemblyAiUploadService;
+import org.example.backend.service.AssemblyAiTranscriptService;
+import org.example.backend.service.SummaryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import reactor.core.publisher.Mono;
 import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
 public class BackendController {
 
-    private final AssemblyAiService assemblyAiService;
+    private final AssemblyAiUploadService assemblyAiUploadService;
+    private final AssemblyAiTranscriptService transcriptService;
+    private final SummaryService service;
 
-    public BackendController(AssemblyAiService assemblyAiService) {
-        this.assemblyAiService = assemblyAiService;
+    public BackendController(AssemblyAiUploadService assemblyAiUploadService, AssemblyAiTranscriptService transcriptService, SummaryService service) {
+        this.assemblyAiUploadService = assemblyAiUploadService;
+        this.transcriptService = transcriptService;
+        this.service = service;
     }
 
-    // File wird bei AssemblyAi hochgeladen
     @PostMapping("/upload")
-    public Mono<ResponseEntity<String>> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        // MultipartFile in Record umwandeln
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+            // transfer MultipartFile in Record
             FileUploadRequest fileUploadRequest = new FileUploadRequest(
                     file.getOriginalFilename(),
                     file.getBytes()
             );
-            return assemblyAiService.uploadFile(fileUploadRequest)
-                    .map(response -> ResponseEntity.ok(response.upload_url()));  // Nur die URL extrahieren
-    }
+            // Upload the file on AssemblyAi
+            AssemblyAiResponse assemblyAiResponse = assemblyAiUploadService.uploadFile(fileUploadRequest);
+            // transcribe the audio
+            String transcript = transcriptService.transcriptFile(assemblyAiResponse).orElse("Fehler");
+            // summarize the transcript
+            Summary summary = service.createSummary(transcript);
 
-    @ExceptionHandler(IOException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleIOException(IOException e) {
-        return e.getMessage();
+        return ResponseEntity.ok(summary.id());
     }
-
 
 }
