@@ -4,6 +4,8 @@ import org.example.backend.model.Summary;
 import org.example.backend.repo.SummaryRepo;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,6 +32,32 @@ class SummaryServiceTest {
         // THEN
         assertEquals(expected,actual);
         verify(repo).save(expected);
+    }
+
+    @Test
+    void getSummaryById_shouldReturnSummary_whenCalledWithValidId() {
+        // GIVEN
+        SummaryService service = new SummaryService(repo, idService, chatGPTService);
+        Summary summary = new Summary("1", "Test", "Test");
+        when(repo.findById("1")).thenReturn(Optional.of(summary));
+        when(idService.generateId()).thenReturn("1");
+
+        // WHEN
+        Summary actual = service.getSummaryById("1");
+
+        // THEN
+        assertEquals(summary, actual);
+    }
+
+    @Test
+    void getSummaryById_shouldThrowException_whenCalledWithInvalidId() {
+        SummaryService service = new SummaryService(repo, idService, chatGPTService);
+        try {
+            service.getSummaryById("1");
+            fail("Es wurde eine Exception erwartet, aber keine geworfen!");
+        } catch (Exception e) {
+            assertEquals("Summary not found", e.getMessage());
+        }
     }
 
 
