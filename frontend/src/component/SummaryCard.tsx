@@ -10,7 +10,7 @@ export default function SummaryCard({summary}: SummaryCardProps){
         <>
             <div>
                 <h2>{summary?.title}</h2>
-                <p>{summary?.transcription}</p>
+                <p>{summary?.text}</p>
             </div>
         </>
     )
