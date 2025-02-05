@@ -167,13 +167,12 @@ class BackendControllerTest {
         mockMvc.perform(get("/api/summary/" + summary.id()))
                 .andExpect(status().isOk())
                 .andExpect(content().json("""
-                                          
-                        {
+                                       {
                                           "id": "1",
                                           "title": "Test",
                                           "text": "Test"
-                                          }
-                                          """));
+                                       }
+                                       """));
     }
 
     @Test
@@ -182,7 +181,7 @@ class BackendControllerTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json("""
                                           {
-                                          "message": "Summary not found"
+                                            "message": "Summary not found"
                                           }
                                           """));
     }
