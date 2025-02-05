@@ -27,4 +27,8 @@ public class SummaryService {
         );
         return repo.save(newSummary);
     }
+
+    public Summary getSummaryById(String id) {
+        return repo.findById(id).orElseThrow(() -> new RuntimeException("Summary not found"));
+    }
 }

@@ -1,7 +1,7 @@
 import './App.css'
 import Header from "./component/Header.tsx";
 import {Route, Routes} from "react-router-dom";
-import LinkPage from "./page/LinkPage.tsx";
+import UploadPage from "./page/UploadPage.tsx";
 import LandingPage from "./page/LandingPage.tsx";
 import DashboardPage from "./page/DashboardPage.tsx";
 import SummaryPage from "./page/SummaryPage.tsx";
@@ -17,7 +17,7 @@ function App() {
                 <Routes>
                     <Route path={"/"} element={<LandingPage />} />
                     <Route path={"/home"} element={<DashboardPage />} />
-                    <Route path={"/newsummary"} element={<LinkPage />} />
+                    <Route path={"/newsummary"} element={<UploadPage />} />
                     <Route path={"/summary/:id"} element={<SummaryPage />} />
                 </Routes>
             </div>

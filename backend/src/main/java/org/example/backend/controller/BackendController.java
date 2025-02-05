@@ -42,4 +42,11 @@ public class BackendController {
         return ResponseEntity.ok(summary.id());
     }
 
+    @GetMapping("/summary/{id}")
+    public Summary getSummaryById(@PathVariable String id) {
+        return service.getSummaryById(id);
+    }
+
+
+
 }
