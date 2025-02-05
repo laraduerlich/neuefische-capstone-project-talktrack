@@ -26,7 +26,7 @@ public class AssemblyAiUploadService {
     }
 
     // Upload the file on AssemblyAI
-    public AssemblyAiResponse uploadFile(FileUploadRequest fileUploadRequest) {
+    public AssemblyAiResponse uploadFile(FileUploadRequest fileUploadRequest) throws NullPointerException {
         // transfer FileUploadRequest in ByteArrayResource
         ByteArrayResource fileResource = new ByteArrayResource(fileUploadRequest.content()) {
             @Override
