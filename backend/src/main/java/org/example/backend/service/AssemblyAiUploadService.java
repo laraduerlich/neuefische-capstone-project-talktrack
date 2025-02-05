@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Service
 public class AssemblyAiUploadService {
@@ -36,13 +37,13 @@ public class AssemblyAiUploadService {
         };
 
         // WebClient-Upload with Multipart-Formular
-        return webclient.post()
-                .header(HttpHeaders.AUTHORIZATION, assemblyApiKey)
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .bodyValue(fileResource)  // file in Body
-                .retrieve()
-                .toEntity(AssemblyAiResponse.class)// Response (Upload-URL)
-                .block()
+        return Objects.requireNonNull(webclient.post()
+                        .header(HttpHeaders.AUTHORIZATION, assemblyApiKey)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .bodyValue(fileResource)  // file in Body
+                        .retrieve()
+                        .toEntity(AssemblyAiResponse.class)// Response (Upload-URL)
+                        .block())
                 .getBody();
     }
 }
