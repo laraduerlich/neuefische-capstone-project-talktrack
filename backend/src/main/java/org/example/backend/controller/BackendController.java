@@ -28,7 +28,7 @@ public class BackendController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("title") String title) throws IOException {
             // transfer MultipartFile in Record
             FileUploadRequest fileUploadRequest = new FileUploadRequest(
                     file.getOriginalFilename(),
@@ -39,7 +39,7 @@ public class BackendController {
             // transcribe the audio
             String transcript = transcriptService.transcriptFile(assemblyAiResponse).orElse("Fehler");
             // summarize the transcript
-            Summary summary = service.createSummary(transcript);
+            Summary summary = service.createSummary(transcript, title);
 
         return ResponseEntity.ok(summary.id());
     }

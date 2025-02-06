@@ -26,7 +26,7 @@ export const getSummaryById = async (id: string | undefined): Promise<Summary> =
         const summary: Summary = {
             id: response.data.id,
             title: response.data.title,
-            text: response.data.transcription
+            text: response.data.text,
         }
         return summary;
     } catch (error) {

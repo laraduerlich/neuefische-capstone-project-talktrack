@@ -30,7 +30,7 @@ export default function SummaryList() {
 
     // Button handelers
     const handleNewSummaryButtonClick = () => {
-        navigate("summary/new");
+        navigate("/summary/new");
     }
 
     return (

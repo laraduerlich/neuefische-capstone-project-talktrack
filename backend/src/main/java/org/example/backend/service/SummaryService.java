@@ -21,10 +21,10 @@ public class SummaryService {
         this.chatGPTService = chatGPTService;
     }
 
-    public Summary createSummary(String transcript) {
+    public Summary createSummary(String transcript, String title) {
         Summary newSummary = new Summary (
                 idService.generateId(),
-                "title",
+                title,
                 chatGPTService.summarizeTranscript(transcript)
         );
         return repo.save(newSummary);

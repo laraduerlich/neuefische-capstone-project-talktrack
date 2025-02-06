@@ -5,6 +5,7 @@ import {createSummary} from "../utils/dataService.ts";
 export default function UploadForm() {
 
     const [file, setFile] = useState<File | undefined>(undefined);
+    const [title, setTitle] = useState<string>('');
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
 
@@ -14,9 +15,16 @@ export default function UploadForm() {
             alert('Bitte wähle eine Datei aus.');
             return;
         }
+        if (!title) {
+            alert('Bitte gebe einen Titel ein.');
+            return;
+        }
+
         setLoading(true)
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("title", title);
+
         try {
             const id = await createSummary(formData); // Backend dauert 1–2 Min.
 
@@ -39,6 +47,11 @@ export default function UploadForm() {
     return (
         <>
             <form onSubmit={handleFileUpload}>
+                <input
+                    type={"text"}
+                    placeholder={"Titel der Zusammenfassung..."}
+                    onChange={(event) => setTitle(event.target.value)}
+                />
                 <input
                     type={"file"}
                     accept={"audio/mp3, audio/mp4, audio/m4a"}

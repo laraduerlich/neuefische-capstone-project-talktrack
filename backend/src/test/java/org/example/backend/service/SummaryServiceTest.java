@@ -27,7 +27,7 @@ class SummaryServiceTest {
         when(repo.save(expected)).thenReturn(expected);
 
         // WHEN
-        Summary actual = service.createSummary(transcript);
+        Summary actual = service.createSummary(transcript, expected.title());
 
         // THEN
         assertEquals(expected,actual);
