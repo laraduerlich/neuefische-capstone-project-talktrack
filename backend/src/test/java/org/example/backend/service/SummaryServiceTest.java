@@ -4,6 +4,8 @@ import org.example.backend.model.Summary;
 import org.example.backend.repo.SummaryRepo;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,5 +62,17 @@ class SummaryServiceTest {
         }
     }
 
+    @Test
+    void getAllSummaries_shouldReturnEmptyList_whenCalledInitially() {
+        // GIVEN
+        SummaryService service = new SummaryService(repo, idService, chatGPTService);
+        List<Summary> expected = Collections.emptyList();
+
+        // WHEN
+        List<Summary> actual = service.getAllSummaries();
+
+        // THEN
+        assertEquals(expected, actual);
+    }
 
 }

@@ -45,18 +45,19 @@ public class BackendController {
     }
 
     @GetMapping("/summary/{id}")
-    public Summary getSummaryById(@PathVariable String id) {
-        return service.getSummaryById(id);
+    public ResponseEntity<Summary> getSummaryById(@PathVariable String id) {
+        Summary summary = service.getSummaryById(id);
+        if (summary != null) {
+            return new ResponseEntity<>(summary, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/summaries")
     public ResponseEntity<List<Summary>> getAllSummaries() {
         List<Summary> summaries = service.getAllSummaries();
-        if (!summaries.isEmpty()) {
-            return new ResponseEntity<>(summaries, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(summaries, HttpStatus.OK);
     }
 
 

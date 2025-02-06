@@ -185,4 +185,12 @@ class BackendControllerTest {
                                           }
                                           """));
     }
+
+    @Test
+    void getAllSummaries_shouldReturnEmptyList_whenCalledInitially () throws Exception {
+        // WHEN & THEN
+        mockMvc.perform(get("/api/summaries"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+    }
 }
