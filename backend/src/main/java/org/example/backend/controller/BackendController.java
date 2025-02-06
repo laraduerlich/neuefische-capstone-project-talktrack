@@ -6,10 +6,12 @@ import org.example.backend.model.assemblyai.FileUploadRequest;
 import org.example.backend.service.AssemblyAiUploadService;
 import org.example.backend.service.AssemblyAiTranscriptService;
 import org.example.backend.service.SummaryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -45,6 +47,16 @@ public class BackendController {
     @GetMapping("/summary/{id}")
     public Summary getSummaryById(@PathVariable String id) {
         return service.getSummaryById(id);
+    }
+
+    @GetMapping("/summaries")
+    public ResponseEntity<List<Summary>> getAllSummaries() {
+        List<Summary> summaries = service.getAllSummaries();
+        if (!summaries.isEmpty()) {
+            return new ResponseEntity<>(summaries, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 
