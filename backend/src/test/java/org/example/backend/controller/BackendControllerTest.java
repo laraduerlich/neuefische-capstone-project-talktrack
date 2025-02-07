@@ -2,7 +2,9 @@ package org.example.backend.controller;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.example.backend.model.Summary;
 import org.example.backend.model.assemblyai.AssemblyAiResponse;
+import org.example.backend.repo.SummaryRepo;
 import org.example.backend.service.AssemblyAiTranscriptService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,24 +14,31 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.io.IOException;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 class BackendControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private SummaryRepo repo;
 
     @MockitoBean
     private AssemblyAiTranscriptService transcriptService;
@@ -53,9 +62,9 @@ class BackendControllerTest {
     }
 
     @DynamicPropertySource
-    static void backendPropsAssemblyAi(DynamicPropertyRegistry registry){
-        registry.add( "ASSEMBLY_URL", () -> assemblyAiMockServer.url("/").toString());
-        registry.add( "CHATGPT_URL", () -> chatGPTMockServer.url("/").toString());
+    static void backendPropsAssemblyAi(DynamicPropertyRegistry registry) {
+        registry.add("ASSEMBLY_URL", () -> assemblyAiMockServer.url("/").toString());
+        registry.add("CHATGPT_URL", () -> chatGPTMockServer.url("/").toString());
     }
 
     @Test
@@ -105,7 +114,7 @@ class BackendControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/upload")
                         .file(mockFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -144,8 +153,36 @@ class BackendControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/upload")
                         .file(mockFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+                .andExpect(status().isInternalServerError());
 
     }
 
+    @Test
+    void getSummaryById_shouldReturnSummary_whenCalledWithValidId() throws Exception {
+        // GIVEN
+        Summary summary = new Summary("1", "Test", "Test");
+        repo.save(summary);
+
+        // WHEN & THEN
+        mockMvc.perform(get("/api/summary/" + summary.id()))
+                .andExpect(status().isOk())
+                .andExpect(content().json("""
+                                       {
+                                          "id": "1",
+                                          "title": "Test",
+                                          "text": "Test"
+                                       }
+                                       """));
+    }
+
+    @Test
+    void getSummaryById_shouldReturnNotFound_whenCalledWithInvalidId() throws Exception {
+        mockMvc.perform(get("/api/summary/1"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("""
+                                          {
+                                            "message": "Summary not found"
+                                          }
+                                          """));
+    }
 }

@@ -1,10 +1,12 @@
 import {FormEvent, useState} from "react";
-import axios from "axios";
+import {useNavigate} from "react-router-dom";
+import {createSummary} from "../utils/dataService.ts";
 
-export default function LinkForm() {
+export default function UploadForm() {
 
     const [file, setFile] = useState<File | undefined>(undefined);
-    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate();
 
     const handleFileUpload = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -12,20 +14,27 @@ export default function LinkForm() {
             alert('Bitte wähle eine Datei aus.');
             return;
         }
+        setLoading(true)
         const formData = new FormData();
-        formData.append('file', file);
-
+        formData.append("file", file);
         try {
-            const response = await axios.post<{ id: string }>("/api/upload", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-            console.log("Upload erfolgreich, Summary ID:", response.data );
-        } catch (error: any) {
+            const id = await createSummary(formData); // Backend dauert 1–2 Min.
+
+            if (!id || id === "Kein ID gefunden") {
+                alert("Fehler beim Hochladen. Keine ID erhalten.");
+                return;
+            }
+
+            navigate("/summary/" + id);
+        } catch (error) {
             console.error("Fehler beim Hochladen:", error);
-            setError("Beim Hochladen der Datei ist ein Fehler aufgetreten.");
+            alert("Ein Fehler ist aufgetreten. Bitte versuche es erneut.");
+        } finally {
+            setLoading(false); // Ladeanzeige wieder ausblenden
         }
     }
 
+    if (loading) return <p>Daten werden hochgeladen...</p>;
 
     return (
         <>
