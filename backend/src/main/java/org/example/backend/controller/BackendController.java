@@ -60,6 +60,15 @@ public class BackendController {
         return new ResponseEntity<>(summaries, HttpStatus.OK);
     }
 
+    @DeleteMapping("/summary/{id}")
+    public ResponseEntity<String> deleteSummaryById(@PathVariable String id) {
+        boolean isDeleted = service.deleteSummaryById(id);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
 
 }

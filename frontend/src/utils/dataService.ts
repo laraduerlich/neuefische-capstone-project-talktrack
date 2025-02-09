@@ -45,3 +45,15 @@ export const getAllSummaries = async () => {
         throw error;
     }
 }
+
+// Delete summary by id
+export const deleteSummaryById = async (id: string | undefined): Promise<string> => {
+    try {
+        const response = await axios.delete(`/api/summary/${id}`);
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        console.error("Kein Summary mit der Id gefunden", error);
+        throw error;
+    }
+}

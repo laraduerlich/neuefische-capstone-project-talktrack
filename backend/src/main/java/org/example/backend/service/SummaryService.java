@@ -37,4 +37,13 @@ public class SummaryService {
     public List<Summary> getAllSummaries() {
         return repo.findAll();
     }
+
+    public Boolean deleteSummaryById(String id) {
+        if (repo.existsById(id)) {
+            repo.deleteById(id);
+            return true;
+        } else {
+            throw new RuntimeException("Summary not found");
+        }
+    }
 }
