@@ -26,11 +26,22 @@ export const getSummaryById = async (id: string | undefined): Promise<Summary> =
         const summary: Summary = {
             id: response.data.id,
             title: response.data.title,
-            text: response.data.transcription
+            text: response.data.text,
         }
         return summary;
     } catch (error) {
         console.error("Kein Summary mit der Id gefunden", error);
+        throw error;
+    }
+}
+
+// Get all summaries
+export const getAllSummaries = async () => {
+    try {
+        const response = await axios.get("/api/summaries");
+        return response.data as Summary[];
+    } catch (error) {
+        console.error("Fehler beim Abrufen der Summaries:", error);
         throw error;
     }
 }

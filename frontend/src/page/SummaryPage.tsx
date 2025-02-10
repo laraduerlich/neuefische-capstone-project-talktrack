@@ -31,7 +31,6 @@ export default function SummaryPage() {
 
     return (
         <>
-            <h1>Summary</h1>
             <SummaryCard summary={summary} />
         </>
     )

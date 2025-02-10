@@ -6,10 +6,12 @@ import org.example.backend.model.assemblyai.FileUploadRequest;
 import org.example.backend.service.AssemblyAiUploadService;
 import org.example.backend.service.AssemblyAiTranscriptService;
 import org.example.backend.service.SummaryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -26,7 +28,7 @@ public class BackendController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("title") String title) throws IOException {
             // transfer MultipartFile in Record
             FileUploadRequest fileUploadRequest = new FileUploadRequest(
                     file.getOriginalFilename(),
@@ -37,14 +39,25 @@ public class BackendController {
             // transcribe the audio
             String transcript = transcriptService.transcriptFile(assemblyAiResponse).orElse("Fehler");
             // summarize the transcript
-            Summary summary = service.createSummary(transcript);
+            Summary summary = service.createSummary(transcript, title);
 
         return ResponseEntity.ok(summary.id());
     }
 
     @GetMapping("/summary/{id}")
-    public Summary getSummaryById(@PathVariable String id) {
-        return service.getSummaryById(id);
+    public ResponseEntity<Summary> getSummaryById(@PathVariable String id) {
+        Summary summary = service.getSummaryById(id);
+        if (summary != null) {
+            return new ResponseEntity<>(summary, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/summaries")
+    public ResponseEntity<List<Summary>> getAllSummaries() {
+        List<Summary> summaries = service.getAllSummaries();
+        return new ResponseEntity<>(summaries, HttpStatus.OK);
     }
 
 

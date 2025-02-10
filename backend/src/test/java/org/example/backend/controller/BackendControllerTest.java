@@ -77,6 +77,8 @@ class BackendControllerTest {
                 "This is a test file".getBytes()  // Dateiinhalt als Byte-Array
         );
 
+        String title = "Test";
+
         assemblyAiMockServer.enqueue(new MockResponse()
                 .addHeader("Content-Type", "application/json")
                 .setBody("""
@@ -113,6 +115,7 @@ class BackendControllerTest {
         // WHEN & THEN
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/upload")
                         .file(mockFile)
+                        .param("title", title)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk());
     }
@@ -184,5 +187,13 @@ class BackendControllerTest {
                                             "message": "Summary not found"
                                           }
                                           """));
+    }
+
+    @Test
+    void getAllSummaries_shouldReturnEmptyList_whenCalledInitially () throws Exception {
+        // WHEN & THEN
+        mockMvc.perform(get("/api/summaries"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
     }
 }

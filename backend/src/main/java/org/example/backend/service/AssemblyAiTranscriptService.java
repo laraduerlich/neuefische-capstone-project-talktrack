@@ -42,4 +42,3 @@ public class AssemblyAiTranscriptService {
         return transcript.getText();
     }
 }
-
