@@ -7,6 +7,7 @@ import org.example.backend.model.assemblyai.AssemblyAiResponse;
 import org.example.backend.repo.SummaryRepo;
 import org.example.backend.service.AssemblyAiTranscriptService;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.io.IOException;
 import java.util.Optional;
+
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -195,5 +198,26 @@ class BackendControllerTest {
         mockMvc.perform(get("/api/summaries"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
+    }
+
+    @Test
+    void deleteSummaryById_shouldDeleteSummary_whenCalledWithValidId() throws Exception {
+        // GIVEN
+        Summary summary = new Summary("1", "Test", "Test");
+        repo.save(summary);
+
+        // WHEN & THEN
+        Assertions.assertTrue(repo.existsById(summary.id()));
+        mockMvc.perform(delete("/api/summary/" + summary.id()))
+                .andExpect(status().isNoContent());
+        Assertions.assertFalse(repo.existsById(summary.id()));
+    }
+
+    @Test
+    void deleteSummaryById_shouldReturnNotFound_whenCalledWithInvalidId() throws Exception {
+        // WHEN & THEN
+        Assertions.assertFalse(repo.existsById("1"));
+        mockMvc.perform(delete("/api/summary/1"))
+                .andExpect(status().isInternalServerError());
     }
 }

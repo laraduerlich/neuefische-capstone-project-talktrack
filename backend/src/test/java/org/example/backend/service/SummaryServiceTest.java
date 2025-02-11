@@ -75,4 +75,31 @@ class SummaryServiceTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    void deleteSummaryById_shouldDeleteSummary_whenCalledWithValidId() {
+        // GIVEN
+        SummaryService service = new SummaryService(repo, idService, chatGPTService);
+        Summary summary = new Summary("1", "title", "Hallo");
+        when(repo.existsById(summary.id())).thenReturn(true);
+
+        // WHEN
+        service.deleteSummaryById(summary.id());
+
+        // THEN
+        verify(repo).deleteById(summary.id());
+    }
+
+    @Test
+    void deleteSummaryById_shouldThrowException_whenCalledWithInvalidId() {
+        SummaryService service = new SummaryService(repo, idService, chatGPTService);
+        when(repo.existsById(anyString())).thenReturn(false);
+
+        try {
+            service.deleteSummaryById("1");
+            fail("Es wird eine Exception erwartet, aber keine geworfen!");
+        } catch (Exception e) {
+            assertEquals("Summary not found", e.getMessage());
+        }
+    }
+
 }
