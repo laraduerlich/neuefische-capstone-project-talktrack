@@ -57,3 +57,14 @@ export const deleteSummaryById = async (id: string | undefined): Promise<string>
         throw error;
     }
 }
+
+// Edit a summary
+export const editSummary = async (summary: Summary) => {
+    try {
+        const response = await axios.put(`/api/summary/${summary.id}`, summary);
+        return response.data;
+    } catch (error) {
+        console.error("Summary konnte nicht geändert werden", error);
+        throw error;
+    }
+}
