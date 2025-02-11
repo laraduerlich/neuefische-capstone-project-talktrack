@@ -46,4 +46,12 @@ public class SummaryService {
             throw new RuntimeException("Summary not found");
         }
     }
+
+    public Summary updateSummary(String id, Summary summary) {
+        if (repo.existsById(id)) {
+            return repo.save(summary);
+        } else {
+            throw new RuntimeException("Summary not found");
+        }
+    }
 }
