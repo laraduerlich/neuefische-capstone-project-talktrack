@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
-import {ChangeEvent, DetailedHTMLProps, FormEvent, InputHTMLAttributes, useEffect, useState} from "react";
-import {editSummary, getSummaryById} from "../utils/dataService.ts";
+import {ChangeEvent, useEffect, useState} from "react";
+import {getSummaryById, updateSummary} from "../utils/dataService.ts";
 import {Summary} from "../type/Summary.tsx";
 import SummaryCard from "../component/SummaryCard.tsx";
 import ButtonWithIcon from "../component/ButtonWithIcon.tsx";
@@ -11,7 +11,7 @@ export default function SummaryPage() {
     const [summary, setSummary] = useState<Summary | null>(null);
     const [loading, setLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [editValues, setEditValues] = useState<Summary | null>(summary);
+    const [editSummary, setEditSummary] = useState<Summary | null>(summary);
 
 
     useEffect(() => {
@@ -22,7 +22,7 @@ export default function SummaryPage() {
                     setSummary(data);
                 })
                 .catch((error) => {
-                    console.error("Zusammenfassung konnte nicht geladen werden", error);
+                    console.error("Summary could not get fetched", error);
                 })
                 .finally(() =>{
                     setLoading(false)
@@ -30,24 +30,39 @@ export default function SummaryPage() {
         }
     }, [id]);
 
+    // to fetch the data for editing
+    useEffect(() => {
+        setEditSummary(summary)
+    }, [summary]);
+
+    // Handler
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        if (!editValues) return;
-        setEditValues({
-            ...editValues,
+        if (!editSummary) return;
+        setEditSummary({
+            ...editSummary,
             [event.target.name]: event.target.value,
         });
     };
 
-    // Button handler
-    const handleSaveButtonClick = (event: FormEvent<HTMLFormElement>) => {
+    const handleSaveButtonClick = (event) => {
         event.preventDefault();
-        if (!editValues) {
+        if (!editSummary) {
             alert('Bitte überprüfe deine Eingabe!');
             return;
         }
-        const i = editSummary(editValues)
-
-
+        updateSummary(editSummary)
+            .then(() => {
+                console.log("Change was successful")
+                // fetch the updated summary from the backend
+                getSummaryById(summary?.id)
+                    .then((data: Summary) => {
+                        setSummary(data)
+                    })
+                setIsEditing(false)
+            })
+            .catch((error) => {
+                console.error("Error after Change", error)
+            });
     }
 
     const handleBackButtonClick = () => {
@@ -61,28 +76,30 @@ export default function SummaryPage() {
 
     // Handling when data is loading or return null
     if (loading) return <p>Lade Daten...</p>;
-    if (editValues === null) return <p>Keine Zusammenfassung gefunden</p>
+    if (!editSummary) return <p>Fehler beim Laden</p>
 
     return (
         <>
-            <SummaryCard summary={summary} />
             {isEditing ? (
                 <form onSubmit={handleSaveButtonClick}>
                     <input
                         name="title"
-                        value={editValues.title}
+                        value={editSummary.title}
                         onChange={handleChange}
                     />
                     <textarea
                         name="text"
-                        value={editValues.text}
+                        value={editSummary.text}
                         onChange={handleChange}
                     />
-                    <ButtonWithIcon text={"Sichern"} onClick={handleSaveButtonClick} />
+                    <ButtonWithIcon text={"Sichern"} type={"submit"} />
                     <ButtonWithIcon text={"Verwerfen"} onClick={handleBackButtonClick} />
                 </form>
             ) : (
-                <ButtonWithIcon text={"Ändern"} onClick={handleEditButtonClick} />
+                <div>
+                    <SummaryCard summary={summary} />
+                    <ButtonWithIcon text={"Ändern"} onClick={handleEditButtonClick} />
+                </div>
             )}
         </>
     )

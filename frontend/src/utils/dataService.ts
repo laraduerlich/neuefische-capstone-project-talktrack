@@ -59,7 +59,7 @@ export const deleteSummaryById = async (id: string | undefined): Promise<string>
 }
 
 // Edit a summary
-export const editSummary = async (summary: Summary) => {
+export const updateSummary = async (summary: Summary) => {
     try {
         const response = await axios.put(`/api/summary/${summary.id}`, summary);
         return response.data;
