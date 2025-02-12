@@ -51,13 +51,8 @@ export default function SummaryPage() {
             return;
         }
         updateSummary(editSummary)
-            .then(() => {
-                console.log("Change was successful")
-                // fetch the updated summary from the backend
-                getSummaryById(summary?.id)
-                    .then((data: Summary) => {
-                        setSummary(data)
-                    })
+            .then((updatedSummary: Summary) => {
+                setSummary(updatedSummary)
                 setIsEditing(false)
             })
             .catch((error) => {

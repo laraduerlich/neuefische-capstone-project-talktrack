@@ -62,7 +62,12 @@ export const deleteSummaryById = async (id: string | undefined): Promise<string>
 export const updateSummary = async (summary: Summary) => {
     try {
         const response = await axios.put(`/api/summary/${summary.id}`, summary);
-        return response.data;
+        const updatedSummary: Summary = {
+            id: response.data.id,
+            title: response.data.title,
+            text: response.data.text
+        }
+        return updatedSummary
     } catch (error) {
         console.error("Summary konnte nicht geändert werden", error);
         throw error;

@@ -218,7 +218,7 @@ class BackendControllerTest {
     }
 
     @Test
-    void deleteSummaryById_shouldReturnNotFound_whenCalledWithInvalidId() throws Exception {
+    void deleteSummaryById_shouldReturnInternalServerError_whenCalledWithInvalidId() throws Exception {
         // WHEN & THEN
         Assertions.assertFalse(repo.existsById("1"));
         mockMvc.perform(delete("/api/summary/1"))
@@ -230,11 +230,45 @@ class BackendControllerTest {
     void updateSummaryById_shouldUpdateSummary_whenCalledWithValidId() throws Exception {
         // GIVEN
         Summary summary = new Summary("1", "Test", "Test");
-        Summary updatedSummary = new Summary("1", "Test2", "Test2");
         repo.save(summary);
 
         // WHEN & THEN
-        mockMvc.perform(put("/api/summary/" + summary.id(), updatedSummary))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(put("/api/summary/" + summary.id())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "1",
+                                  "title": "Test2",
+                                  "text": "Test2"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(content().json("""
+                                          {
+                                            "id": "1",
+                                            "title": "Test2",
+                                            "text": "Test2"
+                                          }
+                                          """));
+    }
+
+    @Test
+    void updateSummaryById_shouldReturnInternalServerError_whenCalledWithInvalidId() throws Exception {
+        // WHEN & THEN
+        mockMvc.perform(put("/api/summary/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "1",
+                                  "title": "Test2",
+                                  "text": "Test2"
+                                }
+                                """))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("""
+                                          {
+                                            "message": "Summary not found"
+                                          }
+                                          """));
     }
 }
