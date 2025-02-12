@@ -63,7 +63,7 @@ class SummaryServiceTest {
             service.getSummaryById("1");
             fail("An exception is expected, but none is thrown!");
         } catch (Exception e) {
-            assertEquals("Summary not found", e.getMessage());
+            assertEquals("Summary could not be found", e.getMessage());
         }
     }
 
@@ -107,7 +107,7 @@ class SummaryServiceTest {
             service.deleteSummaryById("1");
             fail("An exception is expected, but none is thrown!");
         } catch (Exception e) {
-            assertEquals("Summary not found", e.getMessage());
+            assertEquals("Summary could not be deleted", e.getMessage());
         }
     }
 
@@ -140,7 +140,7 @@ class SummaryServiceTest {
             service.updateSummary(summary.id(), summary);
             fail("An exception is expected, but none is thrown!");
         } catch (Exception e) {
-            assertEquals("Summary not found", e.getMessage());
+            assertEquals("Summary could not be updated", e.getMessage());
         }
     }
 }
