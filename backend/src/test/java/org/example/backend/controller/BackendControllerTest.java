@@ -189,7 +189,7 @@ class BackendControllerTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json("""
                                           {
-                                            "message": "Summary not found"
+                                            "message": "Summary could not be found"
                                           }
                                           """));
     }
@@ -222,7 +222,12 @@ class BackendControllerTest {
         // WHEN & THEN
         Assertions.assertFalse(repo.existsById("1"));
         mockMvc.perform(delete("/api/summary/1"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("""
+                                          {
+                                            "message": "Summary could not be deleted"
+                                          }
+                                          """));
     }
 
     // --------------------------------------- UPDATE ---------------------------------------
@@ -267,7 +272,7 @@ class BackendControllerTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json("""
                                           {
-                                            "message": "Summary not found"
+                                            "message": "Summary could not be updated"
                                           }
                                           """));
     }
