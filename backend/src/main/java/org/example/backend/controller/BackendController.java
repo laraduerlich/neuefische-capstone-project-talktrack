@@ -70,5 +70,15 @@ public class BackendController {
         }
     }
 
+    @PutMapping("/summary/{id}")
+    public ResponseEntity<Summary> updateSummaryById(@PathVariable String id, @RequestBody Summary summary) {
+        Summary updatedSummary = service.updateSummary(id, summary);
+        if (updatedSummary != null) {
+            return new ResponseEntity<>(updatedSummary, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

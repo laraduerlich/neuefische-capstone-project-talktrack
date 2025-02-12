@@ -31,7 +31,7 @@ public class SummaryService {
     }
 
     public Summary getSummaryById(String id) {
-        return repo.findById(id).orElseThrow(() -> new RuntimeException("Summary not found"));
+        return repo.findById(id).orElseThrow(() -> new RuntimeException("Summary could not be found"));
     }
 
     public List<Summary> getAllSummaries() {
@@ -43,7 +43,15 @@ public class SummaryService {
             repo.deleteById(id);
             return true;
         } else {
-            throw new RuntimeException("Summary not found");
+            throw new RuntimeException("Summary could not be deleted");
+        }
+    }
+
+    public Summary updateSummary(String id, Summary summary) {
+        if (repo.existsById(id)) {
+            return repo.save(summary);
+        } else {
+            throw new RuntimeException("Summary could not be updated");
         }
     }
 }

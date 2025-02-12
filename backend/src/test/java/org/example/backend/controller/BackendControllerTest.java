@@ -70,6 +70,7 @@ class BackendControllerTest {
         registry.add("CHATGPT_URL", () -> chatGPTMockServer.url("/").toString());
     }
 
+    // --------------------------------------- UPLOAD ---------------------------------------
     @Test
     void uploadFile_checkResponseStatus() throws Exception {
         // GIVEN
@@ -163,6 +164,7 @@ class BackendControllerTest {
 
     }
 
+    // --------------------------------------- GET BY ID ---------------------------------------
     @Test
     void getSummaryById_shouldReturnSummary_whenCalledWithValidId() throws Exception {
         // GIVEN
@@ -187,11 +189,12 @@ class BackendControllerTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json("""
                                           {
-                                            "message": "Summary not found"
+                                            "message": "Summary could not be found"
                                           }
                                           """));
     }
 
+    // --------------------------------------- GET ALL ---------------------------------------
     @Test
     void getAllSummaries_shouldReturnEmptyList_whenCalledInitially () throws Exception {
         // WHEN & THEN
@@ -200,6 +203,7 @@ class BackendControllerTest {
                 .andExpect(content().json("[]"));
     }
 
+    // --------------------------------------- DELETE ---------------------------------------
     @Test
     void deleteSummaryById_shouldDeleteSummary_whenCalledWithValidId() throws Exception {
         // GIVEN
@@ -214,10 +218,62 @@ class BackendControllerTest {
     }
 
     @Test
-    void deleteSummaryById_shouldReturnNotFound_whenCalledWithInvalidId() throws Exception {
+    void deleteSummaryById_shouldReturnInternalServerError_whenCalledWithInvalidId() throws Exception {
         // WHEN & THEN
         Assertions.assertFalse(repo.existsById("1"));
         mockMvc.perform(delete("/api/summary/1"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("""
+                                          {
+                                            "message": "Summary could not be deleted"
+                                          }
+                                          """));
+    }
+
+    // --------------------------------------- UPDATE ---------------------------------------
+    @Test
+    void updateSummaryById_shouldUpdateSummary_whenCalledWithValidId() throws Exception {
+        // GIVEN
+        Summary summary = new Summary("1", "Test", "Test");
+        repo.save(summary);
+
+        // WHEN & THEN
+        mockMvc.perform(put("/api/summary/" + summary.id())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "1",
+                                  "title": "Test2",
+                                  "text": "Test2"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(content().json("""
+                                          {
+                                            "id": "1",
+                                            "title": "Test2",
+                                            "text": "Test2"
+                                          }
+                                          """));
+    }
+
+    @Test
+    void updateSummaryById_shouldReturnInternalServerError_whenCalledWithInvalidId() throws Exception {
+        // WHEN & THEN
+        mockMvc.perform(put("/api/summary/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "1",
+                                  "title": "Test2",
+                                  "text": "Test2"
+                                }
+                                """))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json("""
+                                          {
+                                            "message": "Summary could not be updated"
+                                          }
+                                          """));
     }
 }
