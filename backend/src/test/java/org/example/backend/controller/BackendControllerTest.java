@@ -70,6 +70,7 @@ class BackendControllerTest {
         registry.add("CHATGPT_URL", () -> chatGPTMockServer.url("/").toString());
     }
 
+    // --------------------------------------- UPLOAD ---------------------------------------
     @Test
     void uploadFile_checkResponseStatus() throws Exception {
         // GIVEN
@@ -163,6 +164,7 @@ class BackendControllerTest {
 
     }
 
+    // --------------------------------------- GET BY ID ---------------------------------------
     @Test
     void getSummaryById_shouldReturnSummary_whenCalledWithValidId() throws Exception {
         // GIVEN
@@ -192,6 +194,7 @@ class BackendControllerTest {
                                           """));
     }
 
+    // --------------------------------------- GET ALL ---------------------------------------
     @Test
     void getAllSummaries_shouldReturnEmptyList_whenCalledInitially () throws Exception {
         // WHEN & THEN
@@ -200,6 +203,7 @@ class BackendControllerTest {
                 .andExpect(content().json("[]"));
     }
 
+    // --------------------------------------- DELETE ---------------------------------------
     @Test
     void deleteSummaryById_shouldDeleteSummary_whenCalledWithValidId() throws Exception {
         // GIVEN
@@ -219,5 +223,18 @@ class BackendControllerTest {
         Assertions.assertFalse(repo.existsById("1"));
         mockMvc.perform(delete("/api/summary/1"))
                 .andExpect(status().isInternalServerError());
+    }
+
+    // --------------------------------------- UPDATE ---------------------------------------
+    @Test
+    void updateSummaryById_shouldUpdateSummary_whenCalledWithValidId() throws Exception {
+        // GIVEN
+        Summary summary = new Summary("1", "Test", "Test");
+        Summary updatedSummary = new Summary("1", "Test2", "Test2");
+        repo.save(summary);
+
+        // WHEN & THEN
+        mockMvc.perform(put("/api/summary/" + summary.id(), updatedSummary))
+                .andExpect(status().isNoContent());
     }
 }

@@ -17,6 +17,7 @@ class SummaryServiceTest {
     private final IdService idService = mock(IdService.class);
     private final ChatGPTService chatGPTService = mock(ChatGPTService.class);
 
+    // --------------------------------------- CREATE ---------------------------------------
     @Test
     void createSummary_shouldCreateSummary_whenCalled() {
         // GIVEN
@@ -36,6 +37,7 @@ class SummaryServiceTest {
         verify(repo).save(expected);
     }
 
+    // --------------------------------------- GET BY ID ---------------------------------------
     @Test
     void getSummaryById_shouldReturnSummary_whenCalledWithValidId() {
         // GIVEN
@@ -53,15 +55,19 @@ class SummaryServiceTest {
 
     @Test
     void getSummaryById_shouldThrowException_whenCalledWithInvalidId() {
+        // GIVEN
         SummaryService service = new SummaryService(repo, idService, chatGPTService);
+
+        // WHEN & THEN
         try {
             service.getSummaryById("1");
-            fail("Es wurde eine Exception erwartet, aber keine geworfen!");
+            fail("An exception is expected, but none is thrown!");
         } catch (Exception e) {
             assertEquals("Summary not found", e.getMessage());
         }
     }
 
+    // --------------------------------------- GET ALL ---------------------------------------
     @Test
     void getAllSummaries_shouldReturnEmptyList_whenCalledInitially() {
         // GIVEN
@@ -75,6 +81,7 @@ class SummaryServiceTest {
         assertEquals(expected, actual);
     }
 
+    // --------------------------------------- DELETE ---------------------------------------
     @Test
     void deleteSummaryById_shouldDeleteSummary_whenCalledWithValidId() {
         // GIVEN
@@ -91,15 +98,49 @@ class SummaryServiceTest {
 
     @Test
     void deleteSummaryById_shouldThrowException_whenCalledWithInvalidId() {
+        // GIVEN
         SummaryService service = new SummaryService(repo, idService, chatGPTService);
         when(repo.existsById(anyString())).thenReturn(false);
 
+        // WHEN & THEN
         try {
             service.deleteSummaryById("1");
-            fail("Es wird eine Exception erwartet, aber keine geworfen!");
+            fail("An exception is expected, but none is thrown!");
         } catch (Exception e) {
             assertEquals("Summary not found", e.getMessage());
         }
     }
 
+    // --------------------------------------- UPDATE ---------------------------------------
+    @Test
+    void updateSummary_shouldUpdateSummary_whenCalledWithValidId() {
+        // GIVEN
+        SummaryService service = new SummaryService(repo, idService, chatGPTService);
+        Summary summary = new Summary("1", "title", "Hallo");
+        when(repo.existsById("1")).thenReturn(true);
+        when(repo.save(summary)).thenReturn(summary);
+
+        // WHEN
+        Summary actual = service.updateSummary(summary.id(), summary);
+
+        // THEN
+        assertEquals(summary, actual);
+        verify(repo).save(summary);
+    }
+
+    @Test
+    void updateSummary_shouldThrowException_whenCalledWithInvalidId() {
+        // GIVEN
+        SummaryService service = new SummaryService(repo, idService, chatGPTService);
+        Summary summary = new Summary("1", "title", "Hallo");
+        when(repo.existsById(anyString())).thenReturn(false);
+
+        // WHEN & THEN
+        try {
+            service.updateSummary(summary.id(), summary);
+            fail("An exception is expected, but none is thrown!");
+        } catch (Exception e) {
+            assertEquals("Summary not found", e.getMessage());
+        }
+    }
 }
