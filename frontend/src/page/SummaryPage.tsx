@@ -77,23 +77,36 @@ export default function SummaryPage() {
         <>
             {isEditing ? (
                 <form onSubmit={handleSaveButtonClick}>
-                    <input
-                        name="title"
-                        value={editSummary.title}
-                        onChange={handleChange}
-                    />
+                    <fieldset className="w-full p-4 space-y-4 border border-gray-300 rounded-md dark:text-gray-800">
+                        <legend className="text-2xl font-bold bg-white/40 rounded-md backdrop-blur-md">
+                            <input
+                                name="title"
+                                value={editSummary.title}
+                                onChange={handleChange}
+                                className="w-full p-3 bg-white/40 backdrop-blur-md border border-gray-300 rounded-md focus:outline-none dark:text-gray-800"
+
+                            />
+                        </legend>
+
                     <textarea
                         name="text"
                         value={editSummary.text}
                         onChange={handleChange}
+                        rows={10}
+                        className={"w-full h-screen p-2 border bg-white/40 backdrop-blur-md border-gray-300 rounded-md resize-none dark:text-gray-800"}
                     />
+                    <div className="flex space-x-4 mt-4">
                     <ButtonWithIcon text={"Sichern"} type={"submit"} />
                     <ButtonWithIcon text={"Verwerfen"} onClick={handleBackButtonClick} />
+                    </div>
+                    </fieldset>
                 </form>
             ) : (
                 <div>
                     <SummaryCard summary={summary} />
-                    <ButtonWithIcon text={"Ändern"} onClick={handleEditButtonClick} />
+                    <div className="flex space-x-4 mt-4">
+                        <ButtonWithIcon text={"Ändern"} onClick={handleEditButtonClick} />
+                    </div>
                 </div>
             )}
         </>

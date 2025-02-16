@@ -46,18 +46,26 @@ export default function UploadForm() {
 
     return (
         <>
-            <form onSubmit={handleFileUpload}>
-                <input
-                    type={"text"}
-                    placeholder={"Titel der Zusammenfassung..."}
-                    onChange={(event) => setTitle(event.target.value)}
-                />
-                <input
-                    type={"file"}
-                    accept={"audio/mp3, audio/mp4, audio/m4a"}
-                    onChange={(event) => setFile(event.target.files?.[0] || undefined)}
-                />
-                <button >Hochladen</button>
+            <form onSubmit={handleFileUpload} className="space-y-4">
+                <fieldset className="w-full p-4 space-y-4 border border-gray-300 rounded-md dark:text-gray-800">
+                    <legend className="text-2xl font-bold">Neue Zusammenfassung:</legend>
+                    <div className="relative rounded-md border bg-white/40 backdrop-blur-md border-gray-300">
+                    <input
+                        id="title"
+                        name="title"
+                        type={"text"}
+                        placeholder={"Titel der Zusammenfassung..."}
+                        onChange={(event) => setTitle(event.target.value)}
+                        className="w-full py-2 pl-3 text-sm rounded-md bg-white/40 backdrop-blur-md focus:outline-none dark:bg-gray-100 dark:text-gray-800" />
+                    </div>
+                    <input
+                        type={"file"}
+                        accept={"audio/mp3, audio/mp4, audio/m4a"}
+                        onChange={(event) => setFile(event.target.files?.[0] || undefined)}
+                        className="py-2 pl-3 text-sm rounded-md focus:outline-none dark:bg-gray-100 dark:text-gray-800 focus:dark:bg-gray-50"
+                    />
+                    <button type="submit" className="sm:w-auto h-12 px-5 py-3 text-sm font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 flex items-center justify-center space-x-2 min-w-[200px]">Hochladen</button>
+                </fieldset>
             </form>
         </>
     )

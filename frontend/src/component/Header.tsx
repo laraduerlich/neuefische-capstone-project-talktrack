@@ -20,15 +20,11 @@ export default function Header() {
                         {/* App Logo */}
                         <img
                             src="/app-logo.png"
-                            alt="TalkTrack"
+                            alt="App Logo"
                             className="w-16 h-16 object-contain"
                         />
                         {/* App Name */}
-                        <img
-                            src="/app-name.png"
-                            alt="App Name"
-                            className="ml-4 hidden md:block h-24 object-contain"
-                        />
+                        <h1 className="ml-4 hidden md:block h-24 object-contain text-3xl mt-8"> TalkTrack </h1>
                     </a>
 
 

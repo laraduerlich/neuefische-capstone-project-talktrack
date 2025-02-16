@@ -62,11 +62,13 @@ export default function SummaryList() {
     return (
         <>
             <div>
-                <div>
+                <div className="flex flex-col sm:flex-row items-center w-full max-w-3xl mx-auto my-6 space-y-4 sm:space-y-0 sm:space-x-4">
                     {/* Search input and new summary button */}
                     <SearchInput value={searchInput} onChange={setSearchInput} />
                     <button
-                        onClick={handleNewSummaryButtonClick}>
+                        onClick={handleNewSummaryButtonClick}
+                        className="w-full sm:w-auto h-12 px-5 py-3 text-sm font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 flex items-center justify-center space-x-2 min-w-[200px]"
+                        >
                         <span>Neue Zusammenfassung</span>
                     </button>
                 </div>
