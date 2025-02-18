@@ -64,7 +64,7 @@ export default function UploadForm() {
                         onChange={(event) => setFile(event.target.files?.[0] || undefined)}
                         className="py-2 pl-3 text-sm rounded-md focus:outline-none dark:bg-gray-100 dark:text-gray-800 focus:dark:bg-gray-50"
                     />
-                    <button type="submit" className="sm:w-auto h-12 px-5 py-3 text-sm font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 flex items-center justify-center space-x-2 min-w-[200px]">Hochladen</button>
+                    <button type="submit" className="sm:w-auto h-12 px-5 py-3 text-sm font-semibold text-white bg-indigo-500 rounded-lg shadow-md hover:bg-indigo-600 flex items-center justify-center space-x-2 min-w-[200px]">Hochladen</button>
                 </fieldset>
             </form>
         </>

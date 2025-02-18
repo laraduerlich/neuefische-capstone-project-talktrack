@@ -96,8 +96,8 @@ export default function SummaryPage() {
                         className={"w-full h-screen p-2 border bg-white/40 backdrop-blur-md border-gray-300 rounded-md resize-none dark:text-gray-800"}
                     />
                     <div className="flex space-x-4 mt-4">
-                    <ButtonWithIcon text={"Sichern"} type={"submit"} />
-                    <ButtonWithIcon text={"Verwerfen"} onClick={handleBackButtonClick} />
+                    <ButtonWithIcon icon={"/save-icon.png"} type={"submit"} />
+                    <ButtonWithIcon icon={"/back-icon.png"} onClick={handleBackButtonClick} />
                     </div>
                     </fieldset>
                 </form>
@@ -105,7 +105,7 @@ export default function SummaryPage() {
                 <div>
                     <SummaryCard summary={summary} />
                     <div className="flex space-x-4 mt-4">
-                        <ButtonWithIcon text={"Ändern"} onClick={handleEditButtonClick} />
+                        <ButtonWithIcon icon={"/edit-icon.png"} onClick={handleEditButtonClick} />
                     </div>
                 </div>
             )}

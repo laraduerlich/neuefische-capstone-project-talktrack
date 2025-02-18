@@ -67,7 +67,7 @@ export default function SummaryList() {
                     <SearchInput value={searchInput} onChange={setSearchInput} />
                     <button
                         onClick={handleNewSummaryButtonClick}
-                        className="w-full sm:w-auto h-12 px-5 py-3 text-sm font-semibold text-white bg-red-500 rounded-lg shadow-md hover:bg-red-600 flex items-center justify-center space-x-2 min-w-[200px]"
+                        className="w-full sm:w-auto h-12 px-5 py-3 text-sm font-semibold text-white bg-indigo-500 rounded-lg shadow-md hover:bg-indigo-600 flex items-center justify-center space-x-2 min-w-[200px]"
                         >
                         <span>Neue Zusammenfassung</span>
                     </button>
@@ -85,11 +85,13 @@ export default function SummaryList() {
                                 <div className="flex space-x-4">
                                     {/* Button für delete & view */}
                                     <ButtonWithIcon
-                                        text={"View"}
-                                        onClick={() => handleViewButtonClick(summary.id)} />
+                                        onClick={() => handleViewButtonClick(summary.id)}
+                                        icon={"/view-icon.png"}
+                                    />
                                     <ButtonWithIcon
-                                        text={"Delete"}
-                                        onClick={() => handleDeleteButtonClick(summary.id)} />
+                                        onClick={() => handleDeleteButtonClick(summary.id)}
+                                        icon={"/delete-icon.png"}
+                                    />
                                 </div>
                             </li>
                             ))}

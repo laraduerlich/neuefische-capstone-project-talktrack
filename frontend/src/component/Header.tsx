@@ -24,7 +24,7 @@ export default function Header() {
                             className="w-16 h-16 object-contain"
                         />
                         {/* App Name */}
-                        <h1 className="ml-4 hidden md:block h-24 object-contain text-3xl mt-8"> TalkTrack </h1>
+                        <h1 className="ml-4 hidden md:block h-24 object-contain text-3xl font-extrabold mt-8"> TalkTrack </h1>
                     </a>
 
 

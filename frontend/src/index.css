@@ -32,19 +32,19 @@
 @keyframes pulse {
     0% {
         transform: scale(0.8);
-        background-color: #bbf7d0; /* Tailwind `green-300` */
+        background-color: #a5b4fc; /* Tailwind `green-300` */
         box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.7); /* Tailwind `green-300` */
     }
 
     50% {
         transform: scale(1.2);
-        background-color: #22c55e; /* Tailwind `green-500` */
+        background-color: #6366f1; /* Tailwind `green-500` */
         box-shadow: 0 0 0 10px rgba(134, 239, 172, 0);
     }
 
     100% {
         transform: scale(0.8);
-        background-color: #bbf7d0; /* Tailwind `green-300` */
+        background-color: #a5b4fc; /* Tailwind `green-300` */
         box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.7);
     }
 }
