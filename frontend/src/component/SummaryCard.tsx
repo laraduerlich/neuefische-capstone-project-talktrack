@@ -72,7 +72,7 @@ export default function SummaryCard({summary, onClick}: SummaryCardProps){
                 />
                 <ButtonWithIcon
                     onClick={handlePDFButtonClick}
-                    icon={"/delete-icon.png"}
+                    icon={"/pdf-icon.png"}
                 />
             </div>
         </>
