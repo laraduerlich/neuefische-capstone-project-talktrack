@@ -103,10 +103,7 @@ export default function SummaryPage() {
                 </form>
             ) : (
                 <div>
-                    <SummaryCard summary={summary} />
-                    <div className="flex space-x-4 mt-4">
-                        <ButtonWithIcon icon={"/edit-icon.png"} onClick={handleEditButtonClick} />
-                    </div>
+                    <SummaryCard summary={summary} onClick={() => handleEditButtonClick()}/>
                 </div>
             )}
         </>
