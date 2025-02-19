@@ -11,9 +11,9 @@ function App() {
 
   return (
     <>
-        <div>
+        <div className="flex flex-col min-h-screen bg-custom-gradient">
             <Header />
-            <div>
+            <div id="page-body-main" className="flex-grow p-6 sm:p-8 lg:p-14">
                 <Routes>
                     <Route path={"/"} element={<LandingPage />} />
                     <Route path={"/home"} element={<DashboardPage />} />
