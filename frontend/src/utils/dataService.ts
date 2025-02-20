@@ -7,6 +7,7 @@ export const createSummary = async (formData: FormData) => {
     try {
         const response = await axios.post<{ id: string }>("/api/upload", formData, {
             headers: { "Content-Type": "multipart/form-data" },
+            timeout: 50000
         });
         console.log("Upload erfolgreich, Summary ID:", response.data);
         return response.data;

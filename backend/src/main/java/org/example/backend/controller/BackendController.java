@@ -36,10 +36,13 @@ public class BackendController {
             );
             // Upload the file on AssemblyAi
             AssemblyAiResponse assemblyAiResponse = assemblyAiUploadService.uploadFile(fileUploadRequest);
+            System.out.println("Upload erfolgreich");
             // transcribe the audio
             String transcript = transcriptService.transcriptFile(assemblyAiResponse).orElse("Fehler");
+            System.out.println("Transcript erfolgreich");
             // summarize the transcript
             Summary summary = service.createSummary(transcript, title);
+            System.out.println("Summary erfolgreich");
 
         return ResponseEntity.ok(summary.id());
     }
