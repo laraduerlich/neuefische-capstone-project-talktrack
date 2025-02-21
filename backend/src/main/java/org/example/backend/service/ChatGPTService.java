@@ -17,7 +17,10 @@ public class ChatGPTService {
     private final RestClient restClient;
 
     // Instruction for ChatGPT
-    private final String instruction = "Fasse Transkript zusammen und arbeite die westenlichen Punkte raus:";
+    private final String instruction = "Fasse das folgende Transkript zusammen. " +
+            "Teile es in thematische Abschnitte und fasse die wichtigsten Aussagen jedes Abschnitts in Unterpunkten vollständig zusammen, " +
+            "ohne wichtige Informationen zu kürzen oder zu weglassen. Achte darauf, dass alle relevanten Punkte erhalten bleiben. " +
+            "Hier ist das Transkript:";
 
     // API Key for ChatGPT
     @Value("${app.chatgpt.api.key}")

@@ -2,6 +2,7 @@ package org.example.backend.service;
 
 import com.assemblyai.api.AssemblyAI;
 import com.assemblyai.api.resources.transcripts.types.Transcript;
+import com.assemblyai.api.resources.transcripts.types.TranscriptLanguageCode;
 import com.assemblyai.api.resources.transcripts.types.TranscriptOptionalParams;
 import com.assemblyai.api.resources.transcripts.types.TranscriptStatus;
 import jakarta.annotation.PostConstruct;
@@ -21,6 +22,7 @@ public class AssemblyAiTranscriptService {
 
     private final TranscriptOptionalParams params = TranscriptOptionalParams.builder()
             .speakerLabels(true)
+            .languageCode(TranscriptLanguageCode.valueOf("de"))
             .build();
 
     @PostConstruct // Runs after dependency injection to initialize the client
